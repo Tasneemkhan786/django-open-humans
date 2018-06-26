@@ -5,9 +5,9 @@ class MessageProjectMembersForm(forms.Form):
     """A form for validating messages and emailing the members of a project."""
 
     access_token = forms.CharField(
-                    label='Master access token',
-                    help_text='link to master acces token',
-                    required=False)
+        label='Master access token',
+        help_text='link to master acces token',
+        required=False)
 
     all_members = forms.BooleanField(
         label='Message all project members?',
@@ -16,8 +16,6 @@ class MessageProjectMembersForm(forms.Form):
     project_member_ids = forms.CharField(
         label='Project member IDs',
         help_text='A comma-separated list of project member IDs.',
-        # TODO: we could validate one of (all_members, project_member_ids) on
-        # the client-side.
         required=False,
         widget=forms.Textarea)
 
@@ -46,11 +44,6 @@ class MessageProjectMembersForm(forms.Form):
                                         'selected or project member ids ' +
                                         'should be provided, not both.')
         if access_token:
-            if not all_members and not project_member_ids:
-                raise forms.ValidationError('Either all members should be ' +
-                                            'selected or project member ids ' +
-                                            'should be provided')
-
             project_member_ids = project_member_ids.split(',')
             project_member_ids = [pmi.strip() for pmi in project_member_ids
                                   if pmi.strip()]
@@ -62,4 +55,10 @@ class MessageProjectMembersForm(forms.Form):
                 if len(project_member_id) != 8:
                     raise forms.ValidationError('Project member id must ' +
                                                 'be eight digits long')
+
+            if not all_members and not project_member_ids:
+                raise forms.ValidationError('Either all members should be ' +
+                                            'selected or project member ids ' +
+                                            'should be provided')
+
         return cleaned_data
